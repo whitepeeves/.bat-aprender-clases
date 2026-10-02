@@ -2,9 +2,9 @@ const express = require("express");
 const path = require("path");
 const app = express();
 
-// Al abrir la raíz del enlace se descarga el .bat
+// La página principal muestra la calculadora y ofrece la descarga del .bat.
 app.get("/", (req, res) => {
-  res.download(path.join(__dirname, "archivos", "descargar.bat"));
+  res.sendFile(path.join(__dirname, "descargador.html"));
 });
 
 // Opcional: cualquier archivo dentro de /archivos queda en /files/<nombre>
